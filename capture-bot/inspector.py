@@ -1,0 +1,14 @@
+import re
+
+class Inspector:
+    def find_domain_urls(self, post, domain):
+        results = []
+        # find all urls in the post / comment body
+        urls = re.findall("(?P<url>https?://[^\s\)]+)", post["body"])
+
+        # in the urls found, search for those that contain the domain name given
+        for url in urls:
+            if domain in url:
+                results.append(url)
+
+        return results

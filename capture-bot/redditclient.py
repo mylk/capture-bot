@@ -3,6 +3,8 @@ import json
 
 class RedditClient:
     posts = []
+    ELEMENT_TYPE_POST = 1
+    ELEMENT_TYPE_COMMENT = 2
 
     def fetch_posts(self, subreddit):
         self.request_posts(subreddit)
@@ -49,7 +51,7 @@ class RedditClient:
             comment = comment["data"]
 
             if "body" in comment:
-                self.add_post(2, comment["id"], comment["body"])
+                self.add_post(self.ELEMENT_TYPE_COMMENT, comment)
 
             # recurse for comments of comment
             if "replies" in comment:
@@ -57,8 +59,20 @@ class RedditClient:
                     # format the input to make it look like post comments and simplify code
                     self.parse_replies([{}, comment["replies"]])
 
-    def add_post(self, element_type, id, body):
-        self.posts.append({ "type": element_type, "id": id, "body": body })
+    def add_post(self, element_type, element):
+        element_id = ""
+        element_body = ""
+        element_url = ""
+
+        if element_type == self.ELEMENT_TYPE_POST:
+            element_id = element["id"]
+            element_body = element["selftext"]
+            element_url = element["url"]
+        elif element_type == self.ELEMENT_TYPE_COMMENT:
+            element_id = element["id"]
+            element_body = element["body"]
+
+        self.posts.append({ "type": element_type, "id": element_id, "body": element_body, "url": element_url })
 
     def get_posts(self):
         return self.posts

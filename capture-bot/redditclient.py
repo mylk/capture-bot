@@ -7,27 +7,28 @@ class RedditClient:
     def fetch_posts(self, subreddit):
         self.request_posts(subreddit)
 
-    def request_posts(self, subreddit):
-        try:
-            # request posts and comments of subreddit
-            posts_url = "https://www.reddit.com/r/%s/new/.json" % (subreddit)
-            request = urllib2.Request(posts_url, headers={ "User-Agent": "Mozilla/5.0" })
-            response = urllib2.urlopen(request).read()
+    def request_posts(self, subreddits):
+        for subreddit in subreddits:
+            try:
+                # request posts and comments of subreddit
+                posts_url = "https://www.reddit.com/r/%s/new/.json" % (subreddit)
+                request = urllib2.Request(posts_url, headers={ "User-Agent": "Mozilla/5.0" })
+                response = urllib2.urlopen(request).read()
 
-            data = json.loads(response)
-            # loop through all posts
-            for post in data["data"]["children"]:
-                post = post["data"]
+                data = json.loads(response)
+                # loop through all posts
+                for post in data["data"]["children"]:
+                    post = post["data"]
 
-                # keep post content for examination
-                self.add_post(1, post["id"], post["selftext"])
+                    # keep post content for examination
+                    self.add_post(self.ELEMENT_TYPE_POST, post)
 
-                # fetch post comments also, if any
-                if post["num_comments"]:
-                    self.request_comments(post)
-        except urllib2.HTTPError, e:
-            print "Error code %s calling %s" % (e.code, "url")
-            exit(1)
+                    # fetch post comments also, if any
+                    if post["num_comments"]:
+                        self.request_comments(post)
+            except urllib2.HTTPError, e:
+                print "Error code %s calling %s" % (e.code, "url")
+                exit(1)
 
     def request_comments(self, post):
         try:

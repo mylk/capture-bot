@@ -1,6 +1,7 @@
 from PyQt4.QtCore import QUrl, QSize
 from PyQt4.QtGui import QApplication, QImage, QPainter
 from PyQt4.QtWebKit import QWebView
+from HTMLParser import HTMLParser
 import time
 
 class Capturer():
@@ -13,6 +14,11 @@ class Capturer():
     def capture(self, url, output_file):
         self.page_load_seconds_waited = 0
         self.loaded = False
+
+        parser = HTMLParser()
+        url = parser.unescape(url)
+
+        print "Capturing: %s" % (url)
 
         web_view = QWebView()
         # get the page's main frame

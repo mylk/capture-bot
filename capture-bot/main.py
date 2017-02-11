@@ -23,8 +23,6 @@ for post in posts:
 
     # capture all urls containing the domain name
     for url in urls:
-        print "Capturing: %s" % (url)
-
         # sanitize the url, to use it as a filename
         filename = re.sub("[^0-9a-zA-Z]", "-", url)
         capturer.capture(url, "/tmp/%s.png" % (filename))

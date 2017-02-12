@@ -4,6 +4,7 @@
 from redditclient import RedditClient
 from inspector import Inspector
 from capturer import Capturer
+from database import Database
 from datetime import datetime
 import re
 
@@ -18,6 +19,7 @@ subreddits = subreddits_file.read().split("\n")
 reddit = RedditClient()
 capturer = Capturer()
 inspector = Inspector()
+database = Database()
 
 print datetime.now().strftime("Started at %Y-%m-%d %H:%M:%S.")
 
@@ -27,6 +29,11 @@ posts = reddit.get_posts()
 
 # loop through all results and check for links of the given domains
 for post in posts:
+    if database.element_exists(post):
+        continue
+    else:
+        database.store_element(post)
+
     urls = inspector.find_domain_urls(post, domain_names)
 
     # capture all urls containing the domain name

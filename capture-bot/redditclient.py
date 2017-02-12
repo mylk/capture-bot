@@ -60,19 +60,30 @@ class RedditClient:
                     self.parse_replies([{}, comment["replies"]])
 
     def add_post(self, element_type, element):
-        element_id = ""
         element_body = ""
         element_url = ""
 
+        element_id = element["id"]
+        element_subreddit = element["subreddit"]
+        element_authored = element["created_utc"]
+
+        if element["edited"]:
+            element_authored = element["edited"]
+
         if element_type == self.ELEMENT_TYPE_POST:
-            element_id = element["id"]
             element_body = element["selftext"]
             element_url = element["url"]
         elif element_type == self.ELEMENT_TYPE_COMMENT:
-            element_id = element["id"]
             element_body = element["body"]
 
-        self.posts.append({ "type": element_type, "id": element_id, "body": element_body, "url": element_url })
+        self.posts.append({
+            "id": element_id,
+            "type": element_type,
+            "subreddit": element_subreddit,
+            "body": element_body,
+            "url": element_url,
+            "authored": element_authored
+        })
 
     def get_posts(self):
         return self.posts

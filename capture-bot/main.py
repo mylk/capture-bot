@@ -1,20 +1,20 @@
 #! /usr/bin/python2
 # -*- coding: utf-8 -*-
 
+from ConfigParser import ConfigParser
 from redditclient import RedditClient
 from inspector import Inspector
 from capturer import Capturer
 from database import Database
 from datetime import datetime
+import json
 import re
 
-# read the domain names to be captured
-domain_names_file = open("domain_names", "r")
-domain_names = domain_names_file.read().split("\n")
 
-# read the subreddits to be monitored
-subreddits_file = open("subreddits", "r")
-subreddits = subreddits_file.read().split("\n")
+config = ConfigParser()
+config.read("capture_bot.cfg")
+subreddits = json.loads(config.get("Default", "subreddits"))
+domain_names = json.loads(config.get("Default", "domain_names"))
 
 reddit = RedditClient()
 capturer = Capturer()

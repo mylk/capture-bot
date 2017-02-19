@@ -1,10 +1,15 @@
 import urllib2
 import json
+import praw
 
 class RedditClient:
+    options = {}
     posts = []
     ELEMENT_TYPE_POST = 1
     ELEMENT_TYPE_COMMENT = 2
+
+    def __init__(self, options):
+        self.options = options
 
     def fetch_posts(self, subreddit):
         self.request_posts(subreddit)
@@ -87,3 +92,17 @@ class RedditClient:
 
     def get_posts(self):
         return self.posts
+
+    def post_comment(self, element, image_url):
+        reddit = praw.Reddit(
+            client_id=self.options.reddit_id,
+            client_secret=self.options.reddit_secret,
+            username=self.options.reddit_username,
+            password=self.options.reddit_password,
+            user_agent="ACaptureBot/%s by mylk" % (self.options.version)
+        )
+
+        element_url = "https://www.reddit.com/comments/%s" % (element["id"])
+
+        submission = reddit.submission(url=element_url)
+        submission.reply(self.options.reddit_comment_text % (image_url))

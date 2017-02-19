@@ -8,6 +8,7 @@ from inspector import Inspector
 from capturer import Capturer
 from database import Database
 from logger import Logger
+from imagehost import ImageHost
 from datetime import datetime
 import json
 import re
@@ -21,6 +22,13 @@ options.update({ "persist_parsed_threads": config.getboolean("Generic", "persist
 options.update({ "watched_subreddits": json.loads(config.get("Capture", "watched_subreddits")) })
 options.update({ "captured_domain_names": json.loads(config.get("Capture", "captured_domain_names")) })
 options.update({ "dump_directory": config.get("Capture", "dump_directory") })
+options.update({ "image_host_id": config.get("Image Host", "id") })
+options.update({ "image_host_secret": config.get("Image Host", "secret") })
+options.update({ "reddit_id": config.get("Reddit", "id") })
+options.update({ "reddit_secret": config.get("Reddit", "secret") })
+options.update({ "reddit_username": config.get("Reddit", "username") })
+options.update({ "reddit_password": config.get("Reddit", "password") })
+options.update({ "reddit_comment_text": config.get("Reddit", "comment_text") })
 
 arguments = OptionParser()
 arguments.add_option("-v", "--verbose", action="store_true", dest="verbose", help="Verbose mode")
@@ -30,10 +38,11 @@ arguments.set_defaults(**options)
 options = arguments.parse_args()[0]
 
 logger = Logger(options.verbose)
-reddit = RedditClient()
+reddit = RedditClient(options)
 capturer = Capturer()
 inspector = Inspector(logger)
 database = Database()
+image_host = ImageHost(options)
 
 print datetime.now().strftime("Started at %Y-%m-%d %H:%M:%S.")
 
@@ -57,6 +66,13 @@ for post in posts:
     for url in urls:
         # sanitize the url, to use it as a filename
         filename = re.sub("[^0-9a-zA-Z]", "-", url)
-        capturer.capture(url, "%s/%s.png" % (options.dump_directory, filename))
+        image_path = "%s/%s.png" % (options.dump_directory, filename)
+
+        capturer.capture(url, image_path)
+
+        image_data = image_host.image_upload(image_path)
+
+        if image_data:
+            reddit.post_comment(post, image_data["link"])
 
 print datetime.now().strftime("Ended at %Y-%m-%d %H:%M:%S.")

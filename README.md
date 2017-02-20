@@ -11,6 +11,12 @@ You can run your own instance. Follow the instructions below:
 sudo pip install praw imgurpython selenium
 ```
 
+You can also use the ```requirements``` file to get all packages installed at the version I used during development:
+
+```
+sudo pip install -r requirements
+```
+
 In case you have both python2 and python3 you may need to use ```pip2``` instead.
 ```capture-bot``` is implemented in python2.
 

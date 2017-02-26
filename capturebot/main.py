@@ -53,10 +53,10 @@ posts = reddit.get_posts()
 # loop through all results and check for links of the given domains
 for post in posts:
     if database.element_exists(post):
-        logger.write_console("Element %s already parsed" % (post["id"]))
+        logger.write_console("Element %s already parsed" % (post.id))
         continue
     else:
-        logger.write_console("Element %s NOW parsed" % (post["id"]))
+        logger.write_console("Element %s NOW parsed" % (post.id))
         if options.persist_parsed_threads:
             database.store_element(post)
 

@@ -1,12 +1,14 @@
 import urllib2
 import json
 import praw
+import time
 
 class RedditClient:
     options = {}
     posts = []
     ELEMENT_TYPE_POST = 1
     ELEMENT_TYPE_COMMENT = 2
+    REPLY_WAIT_MINUTES_MAX = 10
 
     def __init__(self, options):
         self.options = options
@@ -103,6 +105,13 @@ class RedditClient:
         )
 
         element_url = "https://www.reddit.com/comments/%s" % (element["id"])
-
         submission = reddit.submission(url=element_url)
-        submission.reply(self.options.reddit_comment_text % (image_url))
+
+        wait_minutes = 1
+        while wait_minutes < self.REPLY_WAIT_MINUTES_MAX:
+            try:
+                submission.reply(self.options.reddit_comment_text % (image_url))
+                break
+            except praw.exceptions.APIException:
+                time.sleep(60 * wait_minutes)
+                wait_minutes += 1

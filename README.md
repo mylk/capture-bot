@@ -59,5 +59,5 @@ or
 
 ```
 cd capturebot # supposes you already are in the project's root directory
-./main.py
+./capturebot.py
 ```

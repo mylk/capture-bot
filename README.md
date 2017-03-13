@@ -49,6 +49,15 @@ Edit ```capture_bot.cfg```:
 
 ## Run the code
 
-- clone or download the code
-- get into the ```capture-bot``` directory
-- run ```./main.py``` from your terminal
+Clone or download the source code and then run
+
+```
+make run
+```
+
+or
+
+```
+cd capturebot # supposes you already are in the project's root directory
+./main.py
+```

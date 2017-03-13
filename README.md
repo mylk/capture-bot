@@ -17,6 +17,12 @@ You can also use the ```requirements``` file to get all packages installed at th
 sudo pip install -r requirements
 ```
 
+or
+
+```
+make deps
+```
+
 In case you have both python2 and python3 you may need to use ```pip2``` instead.
 ```capture-bot``` is implemented in python2.
 

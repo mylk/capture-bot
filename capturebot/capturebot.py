@@ -12,7 +12,7 @@ from imagehost import ImageHost
 from datetime import datetime
 import json
 import re
-
+import os
 
 def main():
     config = ConfigParser()
@@ -76,6 +76,7 @@ def main():
 
             if image_data:
                 reddit.post_comment(post, image_data["link"])
+                os.remove(image_path)
 
     print datetime.now().strftime("Ended at %Y-%m-%d %H:%M:%S.")
 
